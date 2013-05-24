@@ -1,12 +1,12 @@
 # jules
 
-Query and manipulate JSON.
+Query and manipulate JSON using JSON Pointer.
 
 # Usage
 
 ## pretty print file
 
-    $ jules location.json
+    $ jules location.json /
     {
       "city": "Boulder",
       "state": "CO"
@@ -14,87 +14,81 @@ Query and manipulate JSON.
     
 ## get a node
 
-    $ jules location.json city
+    $ jules location.json /city
     Boulder
 
 ## set a node
 
-    $ jules location.json city set Denver
-    $ jules location.json
+    $ jules location.json /
+    {
+      "city": "Boulder",
+      "state": "CO"
+    }
+
+Update an existing node with `set`:
+
+    $ jules location.json /city set Denver
+    $ jules location.json /
     {
       "city": "Denver",
       "state": "CO"
     }
 
-## remove a node
+Add a new node with `set`:
 
-    $ jules location.json state remove
-    $ jules location.json
-    {
-      "city": "Denver"
-    }
-    
-## set a new node
-
-    $ jules location.json
-    {
-      "city": "Denver"
-    }
-    $ jules location.json state set CO
-    $ jules location.json country set US
-    $ jules location.json
+    $ jules location.json /state set CO
+    $ jules location.json /country set US
+    $ jules location.json /
     {
       "city": "Denver",
       "state": "CO",
       "country": "US"
     }
 
-## specify the root node
+## remove a node
 
-The root node is specified with `.`.
+    $ jules location.json /
+    {
+      "city": "Boulder",
+      "state": "CO"
+    }
 
-    $ jules example.json
-    {}
-    $ jules example.json . set 3
-    $ jules example.json
-    3
+The `remove` command removes the selected node (much like jQuery):
 
-## add an element to an array
+    $ jules location.json /state remove
+    $ jules location.json
+    {
+      "city": "Denver"
+    }
 
-    $ jules blog-entry.json
+## add elements to an array
+
+    $ jules blog-entry.json /
     {
       "title": "Ralph Waldo Emerson quote",
       "body": "A foolish consistency is the hobgoblin of little minds",
       "tags": ["consistency"]
     }
-    $ jules blog-entry.json tags
+    $ jules blog-entry.json /tags
     ["consistency"]
-    $ jules blog-entry.json tags add opinions
+
+Use the `append` command to append to an array node:
+
+    $ jules blog-entry.json /tags append opinions
+    $ jules blog-entry.json /tags
     ["consistency", "opinions"]
-    $ jules blog-entry.json
-    {
-      "title": "Ralph Waldo Emerson quote",
-      "body": "A foolish consistency is the hobgoblin of little minds",
-      "tags": ["consistency", "opinions"]
-    }
 
-## set multiple properties
+If you give muliple values, multiple values will be appended:
 
-    $ jules example.json
-    {
-      "foo": 15,
-      "bar": {
-        "baz": null
-      }
-    }
-    $ jules example.json . set quux 19 bar.baz test
-    {
-      "foo": 15,
-      "bar": {
-        "baz": "test"
-      },
-      "quux": 19
-    }
+    $ jules blog-entry.json /tags append minds foolish
+    $ jules blog-entry.json /tags
+    ["consistency", "opinions", "minds", "foolish"]
+
+To insert in a certain position, use `insert` with the index before the value(s):
+
+    $ jules blog-entry.json /tags insert 0 quote
+    $ jules blog-entry.json /tags
+    ["quote", "consistency", "opinions", "minds", "foolish"]
 
 ## force a string
 
