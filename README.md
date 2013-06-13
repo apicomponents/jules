@@ -52,6 +52,20 @@ Add a new node with `set`:
       "country": "US"
     }
 
+To use the argument as a string when it's valid JSON, use set-str:
+
+    $ jules example.json
+    {}
+    $ jules example.json foo set []
+    {
+      "foo": []
+    }
+    $ jules example.json bar set-str []
+    {
+      "foo": [],
+      "bar": "[]"
+    }
+
 ## edit a node
 
 To open part or all of the document in an editor, use the *edit* command:
@@ -65,6 +79,14 @@ To edit a string as JSON, rather than the JSON string at a node:
 
     $ jules location.json /city edit-json
 
+To save the modified data as a string, even if it's valid JSON:
+
+    $ jules location.json /city edit-str
+
+## move a node
+
+    $ jules location.json /state mv /province
+
 ## remove a node
 
     $ jules location.json /
@@ -73,9 +95,9 @@ To edit a string as JSON, rather than the JSON string at a node:
       "state": "CO"
     }
 
-The `remove` command removes the selected node (much like jQuery):
+The `rm` command removes the selected node (much like jQuery):
 
-    $ jules location.json /state remove
+    $ jules location.json /state rm
     $ jules location.json
     {
       "city": "Denver"
@@ -109,20 +131,6 @@ To insert in a certain position, use `insert` with the index before the value(s)
     $ jules blog-entry.json /tags insert 0 quote
     $ jules blog-entry.json /tags
     ["quote", "consistency", "opinions", "minds", "foolish"]
-
-## force a string
-
-    $ jules example.json
-    {}
-    $ jules example.json foo set []
-    {
-      "foo": []
-    }
-    $ jules example.json bar set-str []
-    {
-      "foo": [],
-      "bar": "[]"
-    }
 
 # Design Principles
 
