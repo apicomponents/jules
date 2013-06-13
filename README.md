@@ -16,6 +16,13 @@ Query and manipulate JSON using JSON Pointer.
 
     $ jules location.json /city
     Boulder
+    $ jules location.json /city get
+    Boulder
+
+When a node contains a string, just the contents will be shown, with a newline added. To get the JSON form of the string:
+
+    $ jules location.json /city get-json
+    "Boulder"
 
 ## set a node
 
@@ -44,6 +51,19 @@ Add a new node with `set`:
       "state": "CO",
       "country": "US"
     }
+
+## edit a node
+
+To open part or all of the document in an editor, use the *edit* command:
+
+    $ jules location.json / edit
+    $ jules location.json /city edit
+
+If it's a string, the string data will be shown in the editor. When it is saved, the last newline will be omitted.
+
+To edit a string as JSON, rather than the JSON string at a node:
+
+    $ jules location.json /city edit-json
 
 ## remove a node
 
@@ -106,4 +126,4 @@ To insert in a certain position, use `insert` with the index before the value(s)
 
 # Design Principles
 
-* Edits files. Make sure you're using version control.
+* Edits files in place. Make sure you're using version control.
