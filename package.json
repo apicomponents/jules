@@ -4,7 +4,8 @@
   "description": "json manipulation tool",
   "main": "jules.js",
   "scripts": {
-    "test": "node test"
+    "pkg": "node -e \"require('./jules').targets.pkg.build()\"",
+    "test": "node -e \"require('./jules').targets.test.run()\""
   },
   "repository": {
     "type": "git",
