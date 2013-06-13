@@ -132,6 +132,14 @@ To insert in a certain position, use `insert` with the index before the value(s)
     $ jules blog-entry.json /tags
     ["quote", "consistency", "opinions", "minds", "foolish"]
 
+## wrap a value in an object, and unwrap
+
+## wrap a value in an array, and unwrap
+
+## convert an array to an object
+
+## convert an object to an array
+
 # Design Principles
 
 * Edits files in place. Make sure you're using version control.
