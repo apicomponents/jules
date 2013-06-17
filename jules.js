@@ -4,7 +4,57 @@ module.exports = {
     this.targets.bin.build();
   },
   "run": function() {
-    console.log('Hello, world.');
+    var args = process.argv.slice(2);
+
+    if (args.length < 1) {
+      console.log('Usage: jules file [command] [path] [args...]');
+      process.exit();
+    }
+    var file = args[0];
+
+    var command_name;
+    if (args.length < 2) {
+      command_name = 'get';
+    } else {
+      command_name = args[1];
+    }
+
+    var command = this.commands[command_name];
+    if (typeof command === 'object' && command !== null) {
+      command.file = file;
+      if (command.before) {
+        if (command.before.length == 1) {
+          command.before(runCommand);
+        } else {
+          command.before();
+          runCommand();
+        }
+      }
+
+      function runCommand() {
+        command.run();
+      }
+    } else {
+      console.error('The command ' + JSON.stringify(command_name) + ' is not supported.');
+      process.exit();
+    }
+  },
+  "commands": {
+    "get": {
+      "usage": "jules file get [path]",
+      "args": [0, 1],
+      "before": function(done) {
+        var that = this;
+        require('fs').readFile(this.file, 'utf8', function(err, data) {
+          if (err) throw err;
+          that.data = JSON.parse(data);
+          done();
+        });
+      },
+      "run": function() {
+        console.log(JSON.stringify(this.data, null, 2));
+      }
+    }
   },
   "targets": {
     "bin": {
