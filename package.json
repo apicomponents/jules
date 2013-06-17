@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "json manipulation tool",
   "main": "jules.js",
+  "bin": "bin.js",
+  "dependencies": {},
   "scripts": {
-    "pkg": "node -e \"require('./jules').targets.pkg.build()\"",
+    "build": "node -e \"require('./jules').build()\"",
     "test": "node -e \"require('./jules').targets.test.run()\""
   },
   "repository": {
