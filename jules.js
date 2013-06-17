@@ -22,11 +22,15 @@ module.exports = {
     var command = this.commands[command_name];
     if (typeof command === 'object' && command !== null) {
       command.file = file;
-      if (command.before) {
-        if (command.before.length == 1) {
-          command.before(runCommand);
+      var before = command.before;
+      if (typeof before == "string") {
+        before = this.helpers[before];
+      }
+      if (before) {
+        if (before.length == 1) {
+          before.call(command, runCommand);
         } else {
-          command.before();
+          before.call(command);
           runCommand();
         }
       }
@@ -39,18 +43,20 @@ module.exports = {
       process.exit();
     }
   },
+  "helpers": {
+    "readFile": function(done) {
+      var that = this;
+      require('fs').readFile(this.file, 'utf8', function(err, data) {
+        if (err) throw err;
+        that.data = JSON.parse(data);
+        done();
+      });
+    }
+  },
   "commands": {
     "get": {
       "usage": "jules file get [path]",
-      "args": [0, 1],
-      "before": function(done) {
-        var that = this;
-        require('fs').readFile(this.file, 'utf8', function(err, data) {
-          if (err) throw err;
-          that.data = JSON.parse(data);
-          done();
-        });
-      },
+      "before": "readFile",
       "run": function() {
         console.log(JSON.stringify(this.data, null, 2));
       }
