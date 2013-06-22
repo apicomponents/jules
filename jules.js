@@ -37,12 +37,17 @@ module.exports = {
     }
 
     var command = this.commands[command_name];
+    command.args = args.slice(3);
     if (typeof command === 'object' && command !== null) {
       command.file = file;
       command.path = path;
 
-      var tasks = [];
-      var i;
+      var tasks = [], i;
+
+      if (typeof command.validate == "function") {
+        tasks.push(command.validate);
+      }
+
       if (Array.isArray(command.before)) {
         for (i=0; i < command.before.length; i++) {
           tasks.push(command.before[i]);
@@ -50,7 +55,16 @@ module.exports = {
       } else if (typeof command.before == 'string' || typeof command.before == 'function') {
         tasks.push(command.before);
       }
+
       tasks.push(command.run);
+
+      if (Array.isArray(command.after)) {
+        for (i=0; i < command.after.length; i++) {
+          tasks.push(command.after[i]);
+        }
+      } else if (typeof command.after == 'string' || typeof command.after == 'function') {
+        tasks.push(command.after);
+      }
 
       for (i=0; i < tasks.length; i++) {
         if (typeof tasks[i] == "string") {
@@ -85,6 +99,12 @@ module.exports = {
         done();
       });
     },
+    "writeFile": function(done) {
+      require('fs').writeFile(this.file, JSON.stringify(this.data, null, 2) + "\n", function(err) {
+        if (err) throw err;
+        done();
+      });
+    },
     "parsePath": function() {
       var path = this.path[0] == '/' ? this.path.substring(1) : this.path;
       this.pathArray = path.length > 0 ? path.split("/") : [];
@@ -102,6 +122,26 @@ module.exports = {
         }
       }
       this.pathData = node;
+    },
+    "setPath": function() {
+      var node = this.data;
+      var pathArray = this.pathArray.slice();
+      var key = '';
+      while (pathArray.length > 0) {
+        key = pathArray.shift();
+        if (pathArray.length == 0) {
+          node[key] = this.pathData;
+          break;
+        } else {
+          if (typeof node[key] == 'undefined') {
+            node[key] = {};
+          } else if (typeof node[key] != 'object' || node[key] == null) {
+            console.error('A non-object element already exists above the given path.');
+            process.exit();
+          }
+          node = node[key];
+        }
+      }
     }
   },
   "commands": {
@@ -119,6 +159,30 @@ module.exports = {
         if (typeof this.pathData !== 'undefined') {
           console.log(JSON.stringify(this.pathData, null, 2));
         }
+      }
+    },
+    "set": {
+      "before": ["readFile", "parsePath", "getPath"],
+      "after": ["setPath", "writeFile"],
+      "validate": function() {
+        if (this.args.length < 1) {
+          var message = [
+            'A path to the node must be provided.',
+            '',
+            'Usage: jules file.json /path/to/node set <data>'
+          ];
+          console.error(message.join("\n"));
+          process.exit();
+        }
+      },
+      "run": function() {
+        var pathData;
+        try {
+          pathData = JSON.parse(this.args[0]);
+        } catch (e) {
+          pathData = this.args[0];
+        }
+        this.pathData = pathData;
       }
     },
     "keys": {
