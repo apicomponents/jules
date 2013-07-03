@@ -29,14 +29,14 @@ module.exports = {
       path = args[1];
     }
 
-    var command_name;
+    var commandName;
     if (args.length < 3) {
-      command_name = 'show';
+      commandName;
     } else {
-      command_name = args[2];
+      commandName = args[2];
     }
 
-    var command = this.commands[command_name];
+    var command = this.commands[commandName];
     command.args = args.slice(3);
     if (typeof command === 'object' && command !== null) {
       command.file = file;
@@ -86,7 +86,7 @@ module.exports = {
         }
       }
     } else {
-      console.error('The command ' + JSON.stringify(command_name) + ' is not supported.');
+      console.error('The command ' + JSON.stringify(commandName) + ' is not supported.');
       process.exit();
     }
   },
