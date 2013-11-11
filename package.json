@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "json manipulation tool",
   "main": "jules.js",
-  "bin": "bin.js",
+  "bin": { "jules": "./bin/jules" },
   "dependencies": {},
   "scripts": {
     "build": "node -e \"require('./jules').build()\"",
