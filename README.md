@@ -1,12 +1,12 @@
 # jules
 
-Query and manipulate JSON using JSON Pointer.
+Query and manipulate JSON using the command line.
 
 # Usage
 
 ## pretty print file
 
-    $ jules location.json /
+    $ jules get location.json
     {
       "city": "Boulder",
       "state": "CO"
@@ -14,53 +14,46 @@ Query and manipulate JSON using JSON Pointer.
     
 ## get a node
 
-    $ jules location.json /city
-    Boulder
-    $ jules location.json /city get
+    $ jules get location.json city
     Boulder
 
-When a node contains a string, just the contents will be shown, with a newline added. To get the JSON form of the string:
+When a node contains a string, just the contents will be shown, with a newline added.
+To get the JSON form of a string, use the `-j` flag:
 
-    $ jules location.json /city get-json
+    $ jules get -j location.json city
     "Boulder"
 
-## set a node
+## put a node
 
-    $ jules location.json /
-    {
-      "city": "Boulder",
-      "state": "CO"
-    }
+Since `jules` is being designed for web developers it uses HTTP concepts. To replace
+a node with some content, use `put`:
 
-Update an existing node with `set`:
+    $ jules location.json . put '{"city": "Boulder", "state": "CO"}'
 
-    $ jules location.json /city set Denver
-    $ jules location.json /
+Update an existing node with `put`:
+
+    $ jules location.json put city Denver
+    $ jules location.json get
     {
       "city": "Denver",
       "state": "CO"
     }
 
-Add a new node with `set`:
+Add a new node with `put`:
 
-    $ jules location.json /state set CO
-    $ jules location.json /country set US
-    $ jules location.json /
+    $ jules location.json put country US
+    $ jules location.json get
     {
       "city": "Denver",
       "state": "CO",
       "country": "US"
     }
 
-To use the argument as a string when it's valid JSON, use set-str:
+To use the argument as a string when it's valid JSON, use `-s`:
 
-    $ jules example.json
+    $ jules example.json get .
     {}
-    $ jules example.json foo set []
-    {
-      "foo": []
-    }
-    $ jules example.json bar set-str []
+    $ jules example.json bar put -s []
     {
       "foo": [],
       "bar": "[]"
@@ -70,67 +63,67 @@ To use the argument as a string when it's valid JSON, use set-str:
 
 To open part or all of the document in an editor, use the *edit* command:
 
-    $ jules location.json / edit
-    $ jules location.json /city edit
+    $ jules location.json edit
+    $ jules location.json edit city
 
 If it's a string, the string data will be shown in the editor. When it is saved, the last newline will be omitted.
 
 To edit a string as JSON, rather than the JSON string at a node:
 
-    $ jules location.json /city edit-json
+    $ jules location.json edit -j city
 
 To save the modified data as a string, even if it's valid JSON:
 
-    $ jules location.json /city edit-str
+    $ jules location.json edit -s /city
 
 ## move a node
 
-    $ jules location.json /state mv /province
+    jules mv <src-file> <src-ref> <dest-ref>
+
+    $ jules mv location.json state province
 
 ## remove a node
 
-    $ jules location.json /
-    {
-      "city": "Boulder",
-      "state": "CO"
-    }
+The `rm` command removes the selected node:
 
-The `rm` command removes the selected node (much like jQuery):
-
-    $ jules location.json /state rm
-    $ jules location.json
+    $ jules rm location.json state
+    $ jules get location.json
     {
       "city": "Denver"
     }
 
 ## add elements to an array
 
-    $ jules blog-entry.json /
+    $ jules get blog-entry.json
     {
       "title": "Ralph Waldo Emerson quote",
       "body": "A foolish consistency is the hobgoblin of little minds",
       "tags": ["consistency"]
     }
-    $ jules blog-entry.json /tags
-    ["consistency"]
 
-Use the `append` command to append to an array node:
+Use the `push` command to append to an array node:
 
-    $ jules blog-entry.json /tags append opinions
-    $ jules blog-entry.json /tags
+    $ jules push blog-entry.json tags opinions
+    $ jules get blog-entry.json tags
     ["consistency", "opinions"]
 
 If you give muliple values, multiple values will be appended:
 
-    $ jules blog-entry.json /tags append minds foolish
-    $ jules blog-entry.json /tags
+    $ jules push blog-entry.json tags minds foolish
+    $ jules get blog-entry.json tags
     ["consistency", "opinions", "minds", "foolish"]
 
 To insert in a certain position, use `insert` with the index before the value(s):
 
-    $ jules blog-entry.json /tags insert 0 quote
-    $ jules blog-entry.json /tags
+    $ jules insert blog-entry.json tags 0 quote
+    $ jules get blog-entry.json tags
     ["quote", "consistency", "opinions", "minds", "foolish"]
+
+To add at a certain position, use `unshift`:
+
+    $ jules unshift blog-entry.json tags hobgoblin
+    $ jules unshift blog-entry.json tags
+    ["hobgoblin", "quote", "consistency", "opinions", "minds", "foolish"]
 
 ## wrap a value in an object, and unwrap
 
