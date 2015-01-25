@@ -2,137 +2,63 @@
 
 Query and manipulate JSON using the command line.
 
-# Usage
+## Usage
 
-## pretty print file
+```
+jules <command> [arguments...]
+jules <file> [selector] [value]
+```
 
-    $ jules get location.json
-    {
-      "city": "Boulder",
-      "state": "CO"
-    }
-    
-## get a node
+`jules`, like `git`, is command-centric. The command is the first argument
+and the way the rest of the arguments will be treated is determined by the
+command. Named arguments (like `--no-pager`) are global, used by a single
+command, or shared between multiple commands (but not all of them).
 
-    $ jules get location.json city
-    Boulder
+For [xtreme](http://cloudatlas.wikia.com/wiki/An_Orison_of_Sonmi-451)
+convenience, there is a default command, used when a filename with an
+extension is given as the first argument. This passes all the arguments to
+the `getset` command.
 
-When a node contains a string, just the contents will be shown, with a newline added.
-To get the JSON form of a string, use the `-j` flag:
+## Commands
 
-    $ jules get -j location.json city
-    "Boulder"
+### get
 
-## put a node
+```
+get [selector]
+```
 
-Since `jules` is being designed for web developers it uses HTTP concepts. To replace
-a node with some content, use `put`:
+Gets the value at *selector* and pretty-prints it. If the selector is
+omitted, pretty-prints the whole document.
 
-    $ jules location.json . put '{"city": "Boulder", "state": "CO"}'
+### set
 
-Update an existing node with `put`:
+```
+set selector [value]
+```
 
-    $ jules location.json put city Denver
-    $ jules location.json get
-    {
-      "city": "Denver",
-      "state": "CO"
-    }
+Sets the value at *selector*.
 
-Add a new node with `put`:
+### getset
 
-    $ jules location.json put country US
-    $ jules location.json get
-    {
-      "city": "Denver",
-      "state": "CO",
-      "country": "US"
-    }
+```
+getset [selector] [value]
+```
 
-To use the argument as a string when it's valid JSON, use `-s`:
+If a value is given, runs the `set` command. Otherwise, runs the `get`
+command. The default command.
 
-    $ jules example.json get .
-    {}
-    $ jules example.json bar put -s []
-    {
-      "foo": [],
-      "bar": "[]"
-    }
+## Topics
 
-## edit a node
+### selector
 
-To open part or all of the document in an editor, use the *edit* command:
+The selector is a [jsone](https://github.com/benatkin/jsone) reference,
+using dots and brackets.
 
-    $ jules location.json edit
-    $ jules location.json edit city
+### pretty-printing
 
-If it's a string, the string data will be shown in the editor. When it is saved, the last newline will be omitted.
+Pretty-printing is done by `JSON.stringify` with two spaces for
+indentation.
 
-To edit a string as JSON, rather than the JSON string at a node:
+## LICENSE
 
-    $ jules location.json edit -j city
-
-To save the modified data as a string, even if it's valid JSON:
-
-    $ jules location.json edit -s /city
-
-## move a node
-
-    jules mv <src-file> <src-ref> <dest-ref>
-
-    $ jules mv location.json state province
-
-## remove a node
-
-The `rm` command removes the selected node:
-
-    $ jules rm location.json state
-    $ jules get location.json
-    {
-      "city": "Denver"
-    }
-
-## add elements to an array
-
-    $ jules get blog-entry.json
-    {
-      "title": "Ralph Waldo Emerson quote",
-      "body": "A foolish consistency is the hobgoblin of little minds",
-      "tags": ["consistency"]
-    }
-
-Use the `push` command to append to an array node:
-
-    $ jules push blog-entry.json tags opinions
-    $ jules get blog-entry.json tags
-    ["consistency", "opinions"]
-
-If you give muliple values, multiple values will be appended:
-
-    $ jules push blog-entry.json tags minds foolish
-    $ jules get blog-entry.json tags
-    ["consistency", "opinions", "minds", "foolish"]
-
-To insert in a certain position, use `insert` with the index before the value(s):
-
-    $ jules insert blog-entry.json tags 0 quote
-    $ jules get blog-entry.json tags
-    ["quote", "consistency", "opinions", "minds", "foolish"]
-
-To add at a certain position, use `unshift`:
-
-    $ jules unshift blog-entry.json tags hobgoblin
-    $ jules unshift blog-entry.json tags
-    ["hobgoblin", "quote", "consistency", "opinions", "minds", "foolish"]
-
-## wrap a value in an object, and unwrap
-
-## wrap a value in an array, and unwrap
-
-## convert an array to an object
-
-## convert an object to an array
-
-# Design Principles
-
-* Edits files in place. Make sure you're using version control.
+[MIT](http://bat.mit-license.org/).
