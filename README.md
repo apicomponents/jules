@@ -1,63 +1,30 @@
 # jules
 
-Query and manipulate JSON using the command line.
+Edit JSON using the command line and the EDITOR.
 
 ## Usage
 
-```
-jules <command> [arguments...]
-jules <file> [selector] [value]
-```
-
-`jules`, like `git`, is command-centric. The command is the first argument
-and the way the rest of the arguments will be treated is determined by the
-command. Named arguments (like `--no-pager`) are global, used by a single
-command, or shared between multiple commands (but not all of them).
-
-For [xtreme](http://cloudatlas.wikia.com/wiki/An_Orison_of_Sonmi-451)
-convenience, there is a default command, used when a filename with an
-extension is given as the first argument. This passes all the arguments to
-the `getset` command.
+`jules <command> [options] [arguments...]`
 
 ## Commands
 
-### get
+### edit
 
 ```
-get [selector]
+jules edit [options] path jsonpath
 ```
 
-Gets the value at *selector* and pretty-prints it. If the selector is
-omitted, pretty-prints the whole document.
+Opens the editor to edit the contents of the node referenced by jsonpath. If
+the file is saved, it updates the node. If not, the file is not modified.
 
-### set
+Options:
 
-```
-set selector [value]
-```
+`--string`
 
-Sets the value at *selector*.
-
-### getset
-
-```
-getset [selector] [value]
-```
-
-If a value is given, runs the `set` command. Otherwise, runs the `get`
-command. The default command.
-
-## Topics
-
-### selector
-
-The selector is a [jsone](https://github.com/benatkin/jsone) reference,
-using dots and brackets.
-
-### pretty-printing
-
-Pretty-printing is done by `JSON.stringify` with two spaces for
-indentation.
+Places the contents of the node directly in the editor, without quotes. If it
+is saved, saves it as a string. Remembers whether there was a newline at the
+end of the string, and if there was not one, doesn't add a newline unless
+it is saved with two newlines (since vim automatically adds a newline).
 
 ## LICENSE
 

@@ -5,23 +5,16 @@
   "main": "index.js",
   "bin": "./bin/jules",
   "dependencies": {
-    "jsone": "*"
   },
   "devDependencies": {
-    "tap": "^0.5.0",
-    "tape": "^3.4.0"
   },
   "scripts": {
-    "test": "tap test/**/*.js"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:benatkin/jules.git"
   },
   "keywords": [
-    "json",
-    "manipulation",
-    "editor"
   ],
   "author": "Ben Atkin",
   "license": "MIT"
