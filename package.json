@@ -1,21 +1,25 @@
 {
   "name": "jules",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "json manipulation tool",
   "main": "index.js",
-  "bin": "./bin/jules",
-  "dependencies": {
+  "bin": {
+    "jules": "cli.js"
   },
-  "devDependencies": {
-  },
-  "scripts": {
-  },
+  "devDependencies": {},
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:benatkin/jules.git"
   },
-  "keywords": [
-  ],
+  "engines": {
+    "node": ">8.0.0"
+  },
+  "keywords": [],
   "author": "Ben Atkin",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "get-stdin": "^5.0.1",
+    "valid-identifier": "0.0.1"
+  }
 }
